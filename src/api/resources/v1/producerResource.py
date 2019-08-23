@@ -25,7 +25,7 @@ class ProducerResource(Resource):
             return {
                 "error": err.messages
             }, 400
-        except TypeError as err:
+        except Exception as err:
             return {
                 "error": "Schema {} is invalid {}".format(
                     data.get("avro_schema"), err
