@@ -1,11 +1,16 @@
 import logging
 import os
 from flask import Flask
+from flask_cors import CORS
 from .api import register_api_routes
-from .kafka import register_kafka 
+from .kafka import register_kafka
+
 
 def create_app(environment = "production"):
     app = Flask(__name__)
+
+    CORS(app)
+
     try:
         from .configs import default
         app.config.from_object(default)
