@@ -1,0 +1,1 @@
+from .resources import register_api_routes
