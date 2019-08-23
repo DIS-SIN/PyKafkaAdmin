@@ -20,7 +20,7 @@ def create_app(environment = "production"):
     if environment == "production":
         try:
             from .configs import production
-            app.config.from_pyfile(production)
+            app.config.from_object(production)
         except ModuleNotFoundError:
             pass
         

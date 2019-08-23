@@ -8,7 +8,7 @@ class SlackHandler(Handler):
     def __init__(self, level=NOTSET, slack_url=None):
         super().__init__()
         if slack_url is None:
-            self.slack_url = os.environ["PyKAFKAADMIN_SLACK_URL"]
+            self.slack_url = os.environ["PyADMINKAFKA_SLACK_URL"]
         else:
             self.slack_url = slack_url
     def emit(self, record):

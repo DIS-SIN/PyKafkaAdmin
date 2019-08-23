@@ -1,3 +1,4 @@
+SEND_FILE_MAX_AGE_DEFAULT = 0
 LOGGING_CONFIG = {
       "version": 1,
       "formatters":{
