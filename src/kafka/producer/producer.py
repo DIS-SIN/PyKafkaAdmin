@@ -3,7 +3,7 @@ import logging
 import time
 from confluent_kafka import avro, KafkaException
 from confluent_kafka.avro import AvroProducer, SerializerError
-from queue import SimpleQueue
+from queue import PriorityQueue
 
 
 class Producer:
@@ -42,7 +42,7 @@ class Producer:
         self.produce_flag = True
         self.production_last_stoped = 0
         self.total_time_producing_stoped = 0
-        self.__msg_queue = SimpleQueue()
+        self.__msg_queue = PriorityQueue()
     
     def produce(self, *topics, msg, schema = None, callback = None):
         """

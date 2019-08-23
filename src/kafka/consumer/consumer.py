@@ -4,7 +4,7 @@ import hashlib
 import time
 import traceback
 import confluent_kafka
-from queue import SimpleQueue
+from queue import PriorityQueue
 from confluent_kafka.avro.serializer import SerializerError
 from confluent_kafka.avro import AvroConsumer
 from confluent_kafka import KafkaError, KafkaException, TopicPartition
@@ -43,7 +43,7 @@ class Consumer:
         )
         self.auto_commit = auto_commit
         if not auto_commit:
-            self.consumed_messages= SimpleQueue()
+            self.consumed_messages= PriorityQueue()
         if not topic is None:
             self.subscribe_to_topic(topic)
         else:
@@ -150,6 +150,7 @@ class Consumer:
                 f"An unknown error has occured when trying to list topics {e}",
                 "ERROR"
             )
+            self.logger.debug(e)
     
     def check_if_topic_exists(self, topic, timeout = 1):
         topic_list = self.list_topics(timeout = timeout)
