@@ -1,0 +1,24 @@
+version: "3"
+services:
+
+#############################################################
+# PyKafkaAdmin
+##############################################################
+  pykafkaadmin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: meinheld-gunicorn-flask:pykafkaadmin
+    hostname: pykafkaadmin
+    container_name: pykafkaadmin
+    ports:
+      - "80:5000"
+    environment:
+      - MODULE_NAME=app
+      - FLASK_ENV=production
+      - PyADMINKAFKA_SLACK_URL=${PyADMINKAFKA_SLACK_URL}
+      - PyADMINKAFKA_BROKER_HOST=${PyADMINKAFKA_BROKER_HOST}
+      - PyADMINKAFKA_SCHEMA_REGISTRY=${PyADMINKAFKA_SCHEMA_REGISTRY}
+
+    
+    
