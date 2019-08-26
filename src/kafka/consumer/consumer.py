@@ -79,7 +79,6 @@ class Consumer:
             except SerializerError as e:
                 try:
                     msg = self.__consumer_non_avro.poll(timeout)
-                    logging.debug(msg)
                     non_avro = True
                 except Exception as e:
                     self.__log_msg(
@@ -193,7 +192,6 @@ class Consumer:
     def __assign(self,consumer,partitions):
         for p in partitions:
             p.offset = consumer.get_watermark_offsets(p)[1] - 1
-        logging.debug(consumer)
         self.__consumer.assign(partitions)
         self.__consumer_non_avro.assign(partitions)
 
