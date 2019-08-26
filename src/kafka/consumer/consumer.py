@@ -45,7 +45,7 @@ class Consumer:
         self.__consumer_non_avro = KafkaConsumer(
             {
                 "bootstrap.servers": broker,
-                "group.id": group_id + "non_avro",
+                "group.id": group_id + "nonavro",
                 "enable.auto.commit": auto_commit
             }
         )
