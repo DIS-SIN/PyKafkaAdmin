@@ -79,6 +79,7 @@ class Consumer:
             except SerializerError as e:
                 try:
                     msg = self.__consumer_non_avro.poll(timeout)
+                    logging.debug(msg)
                     non_avro = True
                 except Exception as e:
                     self.__log_msg(
