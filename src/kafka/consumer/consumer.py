@@ -177,8 +177,8 @@ class Consumer:
             
     def subscribe_to_topic(self, topic):
         try:
-            self.__consumer.subscribe([topic], on_assign = self.__assign)
             self.__consumer_non_avro.subscribe([topic], on_assign = self.__assign)
+            self.__consumer.subscribe([topic], on_assign = self.__assign)
             self.topic = topic
             return True
         except Exception as e:
