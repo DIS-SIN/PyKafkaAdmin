@@ -7,7 +7,11 @@ from marshmallow import ValidationError
 
 class ConsumerResource(Resource):
     consume_request_schema = ConsumeMessageRequestSchema()
-    def get(self, topic):
+    def get(self, topic = None):
+        if topic is None:
+            return {
+                "error": "No Topic has been specified"
+            }, 400
         consumer = get_consumer()
         topic_exists = consumer.check_if_topic_exists(topic)
         if topic_exists is None:
