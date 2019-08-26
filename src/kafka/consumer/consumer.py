@@ -193,6 +193,7 @@ class Consumer:
     def __assign(self,consumer,partitions):
         for p in partitions:
             p.offset = consumer.get_watermark_offsets(p)[1] - 1
+        logging.debug(consumer)
         consumer.assign(partitions)
 
         
