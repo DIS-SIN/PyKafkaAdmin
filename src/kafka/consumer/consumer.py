@@ -3,11 +3,12 @@ import logging.config
 import hashlib
 import time
 import traceback
+import json
 import confluent_kafka
 from queue import PriorityQueue
 from confluent_kafka.avro.serializer import SerializerError
 from confluent_kafka.avro import AvroConsumer
-from confluent_kafka import KafkaError, KafkaException, TopicPartition
+from confluent_kafka import KafkaError, KafkaException, TopicPartition, Consumer as KafkaConsumer 
 from datetime import datetime
 
 class Consumer:
@@ -36,8 +37,15 @@ class Consumer:
         self.__consumer = AvroConsumer(
             {
                 "bootstrap.servers": broker,
-                "group.id": "sdcsd",
+                "group.id": group_id,
                 "schema.registry.url": schema_registry,
+                "enable.auto.commit": auto_commit
+            }
+        )
+        self.__consumer_non_avro = KafkaConsumer(
+            {
+                "bootstrap.servers": broker,
+                "group.id": group_id + "non_avro",
                 "enable.auto.commit": auto_commit
             }
         )
@@ -65,10 +73,15 @@ class Consumer:
         """
         if not self.topic is None:
             msg = None
+            non_avro = False
             try:
                 msg = self.__consumer.poll(timeout)
             except SerializerError as e:
-                self.__log_msg(
+                try:
+                    msg = self.__consumer_non_avro.poll(timeout)
+                    non_avro = True
+                except Exception as e:
+                    self.__log_msg(
                     "Message deserialization has failed {}: {}".format(msg,e),
                     "See the following stack trace",
                     f"{traceback.format_exc()}",
@@ -99,7 +112,11 @@ class Consumer:
                         self.consumed_messages.put_nowait(
                             msg
                         )
-                    return msg.value()
+                    if non_avro:
+                        data_to_be_returned = json.loads(msg.value().decode())
+                    else:
+                        data_to_be_returned = msg.value()
+                    return data_to_be_returned
         else:
             raise ValueError(
                 "Consumer is currently not subscribed to a topic"
@@ -160,6 +177,7 @@ class Consumer:
     def subscribe_to_topic(self, topic):
         try:
             self.__consumer.subscribe([topic], on_assign = self.__assign)
+            self.__consumer_non_avro.subscribe([topic], on_assign = self.__assign)
             self.topic = topic
             return True
         except Exception as e:
@@ -173,7 +191,7 @@ class Consumer:
     
     def __assign(self,consumer,partitions):
         for p in partitions:
-            p.offset = self.__consumer.get_watermark_offsets(p)[1] - 1
+            p.offset = consumer.get_watermark_offsets(p)[1] - 1
         consumer.assign(partitions)
 
         
