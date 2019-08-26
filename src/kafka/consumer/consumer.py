@@ -45,7 +45,7 @@ class Consumer:
         self.__consumer_non_avro = KafkaConsumer(
             {
                 "bootstrap.servers": broker,
-                "group.id": group_id + "nonavro",
+                "group.id": group_id + "0",
                 "enable.auto.commit": auto_commit
             }
         )
@@ -178,7 +178,6 @@ class Consumer:
     def subscribe_to_topic(self, topic):
         try:
             self.__consumer_non_avro.subscribe([topic], on_assign = self.__assign)
-            logging.debug("Subscribed " + str(self.__consumer_non_avro))
             self.__consumer.subscribe([topic], on_assign = self.__assign)
             self.topic = topic
             return True
@@ -195,7 +194,8 @@ class Consumer:
         for p in partitions:
             p.offset = consumer.get_watermark_offsets(p)[1] - 1
         logging.debug(consumer)
-        consumer.assign(partitions)
+        self.__consumer.assign(partitions)
+        self.__consumer_non_avro.assign(partitions)
 
         
     def close(self):
